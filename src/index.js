@@ -45,7 +45,7 @@ const isDigital = (value, msg = '') => {
 };
 const matchCount = (value, reg, count, msg = '') => {
   const result = value.match(reg)
-  if (result.length !== count) {
+  if (!result || result.length !== count) {
     throw new Error(`${msg}: expected ${value} match ${reg} to be ${count} result`);
   }
 };
