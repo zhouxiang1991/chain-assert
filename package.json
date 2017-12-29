@@ -1,6 +1,6 @@
 {
   "name": "chain-assert",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "custom assert",
   "main": "lib/index.js",
   "author": "zhouxiang",
@@ -10,7 +10,7 @@
     "compile": "./node_modules/.bin/babel -d lib/ src/",
     "publish": "yarn publish --registry https://registry.npmjs.com"
   },
-  "repository" : {
+  "repository": {
     "type": "git",
     "url": "git@github.com:zhouxiang1991/chain-assert.git"
   },
