@@ -1,7 +1,7 @@
 {
   "name": "chain-assert",
-  "version": "1.0.2",
-  "description": "custom assert",
+  "version": "1.1.2",
+  "description": "hain-assert support chain calls",
   "main": "lib/index.js",
   "author": "zhouxiang",
   "license": "MIT",
