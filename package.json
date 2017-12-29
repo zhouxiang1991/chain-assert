@@ -10,6 +10,10 @@
     "compile": "./node_modules/.bin/babel -d lib/ src/",
     "publish": "yarn publish --registry https://registry.npmjs.com"
   },
+  "repository" : {
+    "type": "git",
+    "url": "git@github.com:zhouxiang1991/chain-assert.git"
+  },
   "eslintConfig": {
     "extends": [
       "airbnb-base",
