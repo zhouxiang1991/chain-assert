@@ -7,30 +7,29 @@ const getType = data => {
   str = str.replace(/^object\s?/g, '');
   return str.toLowerCase();
 };
-
 const isBuffer = (value, msg = '') => {
   if (!_.isBuffer(value)) {
-    throw new Error(`${msg}: expected ${value} to be a buffer`);
+    throw new Error(`${msg}: expected ${value} to be buffer`);
   }
 };
 const isInteger = (value, msg = '') => {
   if (!Number.isInteger(value)) {
-    throw new Error(`${msg}: expected ${value} to be a integer`);
+    throw new Error(`${msg}: expected ${value} to be integer`);
   }
 };
 const isZreo = (value, msg = '') => {
   if (value !== 0) {
-    throw new Error(`${msg}: expected ${value} to be a zreo`);
+    throw new Error(`${msg}: expected ${value} to be zreo`);
   }
 };
 const isPositive = (value, msg = '') => {
   if (value < 0) {
-    throw new Error(`${msg}: expected ${value} to be a positive number`);
+    throw new Error(`${msg}: expected ${value} to be positive number`);
   }
 };
 const isNegative = (value, msg = '') => {
   if (value > 0) {
-    throw new Error(`${msg}: expected ${value} to be a negative number`);
+    throw new Error(`${msg}: expected ${value} to be negative number`);
   }
 };
 const decimal = (value, decimal, msg = '') => {
@@ -47,10 +46,20 @@ const isDigital = (value, msg = '') => {
 const matchCount = (value, reg, count, msg = '') => {
   const result = value.match(reg)
   if (result.length !== count) {
-    throw new Error(`${msg}: expected ${value} match ${reg} to ${count} result`);
+    throw new Error(`${msg}: expected ${value} match ${reg} to be ${count} result`);
   }
 };
-
+const isNotEmpty = (value, msg = '') => {
+  const type = getType(value)
+  if (
+    type === 'null'
+    || type === 'undefined'
+  ) {
+    assert.exists(value, msg);
+  } else {
+    assert.notEmpty(value, msg);
+  }
+};
 class Assert {
   constructor(first) {
     this.first = first;
@@ -81,7 +90,7 @@ class Assert {
           } catch {
           }
         }
-        throw new Error(`${argument[2]}: expected ${argument[0]}:${getType(argument[0])} type in [${argument[1]}]`);
+        throw new Error(`${argument[2] || ''}: expected ${getType(argument[0])} in [${argument[1]}]`);
         break;
       }
       default: {
@@ -155,7 +164,8 @@ class Assert {
     if (this.first) {
       return new Assert().notEmpty(...args);
     }
-    return this.execute(assert.isNotEmpty, ...args);
+    return this.execute(isNotEmpty, ...args);
+    // return this.execute(assert.isNotEmpty, ...args);
   }
   function(...args) {
     if (this.first) {
