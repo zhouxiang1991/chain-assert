@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import deline from 'deline';
 import { assert } from 'chai';
 
 const getType = data => {
@@ -42,6 +43,14 @@ const isDigital = (value, msg = '') => {
   if (isNaN(value)) {
     throw new Error(`${msg}: expected ${value} to be digital`);
   }
+};
+const isUrl = (value, msg = '') => {
+  const regexpStr = deline`
+    (https?|ftp|file)://\
+    [-A-Za-z0-9+&@#/%?=~_|!:,.;]+\
+    [-A-Za-z0-9+&@#/%=~_|]`;
+  const reg = new RegExp(regexpStr, 'g');
+  assert.match(value, reg, msg)
 };
 const matchCount = (value, reg, count, msg = '') => {
   const result = value.match(reg)
@@ -317,6 +326,12 @@ class Assert {
       args[0] = getType(args[0]) === 'string' ? new RegExp(args[0], 'g') : args[0];
     }
     return this.execute(matchCount, ...args);
+  }
+  url(...args) {
+    if (this.first) {
+      return new Assert().url(...args);
+    }
+    return this.execute(isUrl, ...args);
   }
 }
 export default new Assert(true);
