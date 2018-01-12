@@ -8,40 +8,66 @@ const getType = data => {
   str = str.replace(/^object\s?/g, '');
   return str.toLowerCase();
 };
+
+const format = value => {
+  const type = getType(value);
+  if (type === 'string') {
+    return `'${value}'`;
+  }
+
+  if (type === 'array') {
+    return `[${value}]`;
+  }
+
+  if (type === 'object') {
+    return `${JSON.stringify(value)}`;
+  }
+
+  return String(value);
+};
+
 const isBuffer = (value, msg = '') => {
   if (!_.isBuffer(value)) {
-    throw new Error(`${msg}: expected ${value} to be buffer`);
+    throw new Error(`${msg}: expected ${format(value)} to be buffer`);
   }
 };
 const isInteger = (value, msg = '') => {
   if (!Number.isInteger(value)) {
-    throw new Error(`${msg}: expected ${value} to be integer`);
+    throw new Error(`${msg}: expected ${format(value)} to be integer`);
   }
 };
 const isZreo = (value, msg = '') => {
   if (value !== 0) {
-    throw new Error(`${msg}: expected ${value} to be zreo`);
+    throw new Error(`${msg}: expected ${format(value)} to be zreo`);
   }
 };
 const isPositive = (value, msg = '') => {
   if (value < 0) {
-    throw new Error(`${msg}: expected ${value} to be positive number`);
+    throw new Error(`${msg}: expected ${format(value)} to be positive number`);
   }
 };
 const isNegative = (value, msg = '') => {
   if (value > 0) {
-    throw new Error(`${msg}: expected ${value} to be negative number`);
+    throw new Error(`${msg}: expected ${format(value)} to be negative number`);
   }
 };
 const decimal = (value, decimal, msg = '') => {
   const d = String(value).split('.')[1].length;
   if (d !== decimal) {
-    throw new Error(`${msg}: expected ${value} decimal to be ${decimal}`);
+    throw new Error(`${msg}: expected ${format(value)} decimal to be ${decimal}`);
   }
 };
 const isDigital = (value, msg = '') => {
   if (isNaN(value)) {
-    throw new Error(`${msg}: expected ${value} to be digital`);
+    throw new Error(`${msg}: expected ${format(value)} to be digital`);
+  }
+};
+const hasValue = (value, msg = '') => {
+  if (
+    !value
+    || _.isEmpty(value)
+  ) {
+    throw new Error(`${msg}: expected ${format(value)} to have value`);
   }
 };
 const isUrl = (value, msg = '') => {
@@ -55,7 +81,7 @@ const isUrl = (value, msg = '') => {
 const matchCount = (value, reg, count, msg = '') => {
   const result = value.match(reg)
   if (!result || result.length !== count) {
-    throw new Error(`${msg}: expected ${value} match ${reg} to be ${count} result`);
+    throw new Error(`${msg}: expected ${format(value)} match ${reg} to be ${count} result`);
   }
 };
 const isNotEmpty = (value, msg = '') => {
@@ -72,15 +98,15 @@ const isNotEmpty = (value, msg = '') => {
 class Assert {
   constructor(first) {
     this.first = first;
-    this.value = null;
+    this._value = null;
   }
   execute(fun, ...args) {
     let argument;
-    if (_.isNil(this.value)) {
-      this.value = args[0];
+    if (_.isNil(this._value)) {
+      this._value = args[0];
       argument = args;
     } else {
-      args.unshift(this.value);
+      args.unshift(this._value);
       argument = args;
     }
     switch (fun) {
@@ -92,9 +118,9 @@ class Assert {
         break;
       }
       case 'typeOfIn': {
-        for (const value of argument[1]) {
+        for (const _value of argument[1]) {
           try {
-            assert.typeOf(argument[0], value);
+            assert.typeOf(argument[0], _value);
             return this;
           } catch {
           }
@@ -228,7 +254,7 @@ class Assert {
     if (this.first) {
       return new Assert().match(...args);
     }
-    if (_.isNil(this.value)) {
+    if (_.isNil(this._value)) {
       args[1] = getType(args[1]) === 'string' ? new RegExp(args[1], 'g') : args[1];
     } else {
       args[0] = getType(args[0]) === 'string' ? new RegExp(args[0], 'g') : args[0];
@@ -245,7 +271,7 @@ class Assert {
     if (this.first) {
       return new Assert().date(...args);
     }
-    if (_.isNil(this.value)) {
+    if (_.isNil(this._value)) {
       args.splice(1, 0, 'date');
     } else {
       args.unshift('date');
@@ -256,7 +282,7 @@ class Assert {
     if (this.first) {
       return new Assert().regexp(...args);
     }
-    if (_.isNil(this.value)) {
+    if (_.isNil(this._value)) {
       args.splice(1, 0, 'regexp');
     } else {
       args.unshift('regexp');
@@ -309,7 +335,7 @@ class Assert {
     if (this.first) {
       return new Assert().notMatch(...args);
     }
-    if (_.isNil(this.value)) {
+    if (_.isNil(this._value)) {
       args[1] = getType(args[1]) === 'string' ? new RegExp(args[1], 'g') : args[1];
     } else {
       args[0] = getType(args[0]) === 'string' ? new RegExp(args[0], 'g') : args[0];
@@ -320,7 +346,7 @@ class Assert {
     if (this.first) {
       return new Assert().matchCount(...args);
     }
-    if (_.isNil(this.value)) {
+    if (_.isNil(this._value)) {
       args[1] = getType(args[1]) === 'string' ? new RegExp(args[1], 'g') : args[1];
     } else {
       args[0] = getType(args[0]) === 'string' ? new RegExp(args[0], 'g') : args[0];
@@ -333,5 +359,12 @@ class Assert {
     }
     return this.execute(isUrl, ...args);
   }
+  value(...args) {
+    if (this.first) {
+      return new Assert().value(...args);
+    }
+    return this.execute(hasValue, ...args);
+  }
 }
-export default new Assert(true);
+const ret =  new Assert(true);
+export default ret;
