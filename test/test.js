@@ -5,4 +5,5 @@ import assert from '../src/index.js';
 // assert.matchCount('a1.00', '[0]', 2);
 // assert.notEmpty([]);
 // console.log(assert.value);
-assert.value([]);
+const a = new Buffer([1,2,3]);
+assert.size(new Buffer([1,2,3]), 3);

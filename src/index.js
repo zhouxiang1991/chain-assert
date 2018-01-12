@@ -36,6 +36,21 @@ const isInteger = (value, msg = '') => {
     throw new Error(`${msg}: expected ${format(value)} to be integer`);
   }
 };
+const size = (value, count ,msg = '') => {
+  const type = getType(value);
+  if (type === 'object') {
+    const size = Object.keys(value).length;
+    if (size !== count) {
+      throw new Error(`${msg}: expected ${format(value)} length to be ${count}`);
+    }
+  } else if (!_.isNil(value.length)) {
+    if (value.length !== count) {
+      throw new Error(`${msg}: expected ${format(value)} length to be ${count}`);
+    }
+  } else {
+    throw new Error(`assert is not suppert to handle [${type}] type`);
+  }
+}
 const isZreo = (value, msg = '') => {
   if (value !== 0) {
     throw new Error(`${msg}: expected ${format(value)} to be zreo`);
@@ -371,6 +386,12 @@ class Assert {
       return new Assert().value(...args);
     }
     return this.execute(hasValue, ...args);
+  }
+  size(...args) {
+    if (this.first) {
+      return new Assert().size(...args);
+    }
+    return this.execute(size, ...args);
   }
 }
 const ret =  new Assert(true);
