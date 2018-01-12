@@ -5,4 +5,4 @@ import assert from '../src/index.js';
 // assert.matchCount('a1.00', '[0]', 2);
 // assert.notEmpty([]);
 // console.log(assert.value);
-assert.value('');
+assert.value([]);

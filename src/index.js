@@ -63,11 +63,18 @@ const isDigital = (value, msg = '') => {
   }
 };
 const hasValue = (value, msg = '') => {
+  const type  = getType(value);
   if (
-    !value
-    || _.isEmpty(value)
+    type === 'string'
+    || type === 'number'
   ) {
-    throw new Error(`${msg}: expected ${format(value)} to have value`);
+    if (!value) {
+      throw new Error(`${msg}: expected ${format(value)} to have value`);
+    }
+  } else {
+    if (_.isEmpty(value)) {
+      throw new Error(`${msg}: expected ${format(value)} to have value`);
+    }
   }
 };
 const isUrl = (value, msg = '') => {
