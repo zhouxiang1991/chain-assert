@@ -86,6 +86,7 @@ const hasValue = (value, msg = '') => {
     if (!value) {
       throw new Error(`${msg}: expected ${format(value)} to have value`);
     }
+  } else if (type === 'boolean') {
   } else {
     if (_.isEmpty(value)) {
       throw new Error(`${msg}: expected ${format(value)} to have value`);
